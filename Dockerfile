@@ -83,6 +83,7 @@ RUN apt-get update \
         git \
         tini \
         ca-certificates \
+        openssh-client \
  && rm -rf /var/lib/apt/lists/*
 
 # Non-root user + required mount dirs (pre-created so bind mounts inherit perms cleanly).
