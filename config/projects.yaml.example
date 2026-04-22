@@ -1,0 +1,27 @@
+# Projects config for claude-code-telegram (ENABLE_PROJECT_THREADS=true, private mode)
+# Copy this file to config/projects.yaml and fill paths.
+projects:
+  - slug: estate-prod
+    name: "Estate Bot — prod"
+    path: /projects/estateall-bot-prod
+    enabled: true
+  - slug: estate-dev
+    name: "Estate Bot — dev"
+    path: /projects/estateall-bot-dev
+    enabled: true
+  - slug: vitali-prod
+    name: "Vitali Assistant — prod"
+    path: /projects/vitali-assistant-prod
+    enabled: true
+  - slug: vitali-dev
+    name: "Vitali Assistant — dev"
+    path: /projects/vitali-assistant-dev
+    enabled: true
+  - slug: wp-prod
+    name: "Albaniall WP — prod"
+    path: /projects/albaniall-wordpress-prod
+    enabled: true
+  - slug: wp-dev
+    name: "Albaniall WP — dev"
+    path: /projects/albaniall-wordpress-dev
+    enabled: true
