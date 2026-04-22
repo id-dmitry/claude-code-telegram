@@ -97,6 +97,11 @@ WORKDIR /app
 # Copy pre-built venv from builder stage.
 COPY --from=builder --chown=botuser:botuser /build/.venv /app/.venv
 
+# Copy low-churn startup scripts BEFORE source so code edits don't invalidate
+# the scripts layer. chmod is done as root; USER directive below drops privs.
+COPY --chown=botuser:botuser scripts/ ./scripts/
+RUN chmod 0755 /app/scripts/*.sh
+
 # Copy application source last — highest-churn layer.
 COPY --chown=botuser:botuser pyproject.toml README.md ./
 COPY --chown=botuser:botuser src/ ./src/
@@ -111,6 +116,7 @@ USER botuser:botuser
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import src.main; print('ok')" || exit 1
 
-# tini handles SIGTERM/SIGINT cleanly, poetry script is the entrypoint.
-ENTRYPOINT ["/usr/bin/tini", "--"]
+# entrypoint.sh runs workspace sync, then execs `tini -- claude-telegram-bot`.
+# tini still becomes PID 1 via exec — signal handling unaffected.
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]
 CMD ["claude-telegram-bot"]
