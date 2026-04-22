@@ -119,4 +119,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # entrypoint.sh runs workspace sync, then execs `tini -- claude-telegram-bot`.
 # tini still becomes PID 1 via exec — signal handling unaffected.
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
-CMD ["claude-telegram-bot"]
+CMD ["python", "-m", "src.main"]
