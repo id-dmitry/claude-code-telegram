@@ -1,0 +1,56 @@
+# =============================================================================
+# docker-compose.yml — local development stack for claude-code-telegram
+#
+# Usage:
+#   1. cp .env.example .env    # fill in TELEGRAM_BOT_TOKEN, etc.
+#   2. cp config/projects.yaml.example config/projects.yaml
+#   3. docker compose up -d --build
+#
+# Production deployment uses a separate stack (Coolify / compose override).
+# =============================================================================
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: claude-code-telegram:local
+    container_name: claude-code-telegram
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    # Local dev mounts — replace with prod paths via override in deployment.
+    volumes:
+      - ./data:/data
+      - ./projects:/projects
+      - ./config:/config:ro
+
+    # Healthcheck inherits from Dockerfile; overridable here if needed.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import src.main; print('ok')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+    # No published ports by default — bot is outbound-only (Telegram long-poll).
+    # Uncomment if FastAPI webhook mode is enabled in config.
+    # ports:
+    #   - "127.0.0.1:8080:8080"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
